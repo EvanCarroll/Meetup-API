@@ -13,12 +13,19 @@ cat <<EOF | psql -d meetup
 		, zip          int
 		, lat          float8
 		, long         float8
-		, join_date    timestamp
-		, visit_date   timestamp
-		, facebook     text
-		, linked_in    text
-		, flickr       text
+		, date_join    timestamp
+		, date_visit   timestamp
+		, l_facebook   text
+		, l_linkedin   text
+		, l_flickr     text
 		, bio          text
-	)
+	);
+	CREATE FUNCTION meetup_profile_url ( text, text ) RETURNS text AS $$
+		SELECT 'http://www.meetup.com/'
+			|| CASE WHEN $2 IS NOT NULL THEN $2::text || '/' ELSE '' END
+			|| 'members/'
+			|| $1
+		;
+	$$ LANGUAGE sql;
 EOF
 

@@ -22,11 +22,11 @@ my $sth = $dbh->prepare(
 		, zip
 		, lat
 		, long
-		, join_date
-		, visit_date
-		, facebook
-		, linked_in
-		, flickr
+		, date_join
+		, date_visit
+		, l_facebook
+		, l_linkedin
+		, l_flickr
 		, bio
 	)
 	VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
