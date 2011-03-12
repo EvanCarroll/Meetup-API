@@ -19,6 +19,7 @@ my $sth = $dbh->prepare(
 		, country
 		, state
 		, city
+		, zip
 		, lat
 		, long
 		, join_date
@@ -28,7 +29,7 @@ my $sth = $dbh->prepare(
 		, flickr
 		, bio
 	)
-	VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
+	VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
 	'
 );
 
@@ -58,6 +59,7 @@ do {
 			, $u->{country}
 			, $u->{state}
 			, $u->{city}
+			, (int($u->{zip})||undef) # meetup3 seriously wtf
 			, $u->{lat}
 			, $u->{lon}
 			, $u->{joined}

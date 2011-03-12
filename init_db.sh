@@ -10,6 +10,7 @@ cat <<EOF | psql -d meetup
 		, country      text
 		, state        text
 		, city         text
+		, zip          int
 		, lat          float8
 		, long         float8
 		, join_date    timestamp
