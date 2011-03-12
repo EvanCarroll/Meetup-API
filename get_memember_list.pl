@@ -1,5 +1,5 @@
+#!/usr/bin/env perl
 use strict;
-$|++;
 use warnings;
 use feature ':5.10';
 use LWP::Simple;
@@ -64,7 +64,6 @@ my $count;
 do {
 	warn "Retreiving url $uri";
 	my $file = get( $uri ) or die "Couldn't fetch";
-	use XXX;
 	Encode::from_to($file, 'iso-8859-1', 'utf8');
 	$json = decode_json( $file );
 
