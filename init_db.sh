@@ -2,7 +2,7 @@
 
 echo "Re-initializing DB";
 
-cat <<EOF | psql -d meetup
+cat <<-'EOF' | psql -d meetup
 	DROP TABLE members;
 	CREATE TABLE members (
 		meetup_id      int          PRIMARY KEY
@@ -20,7 +20,7 @@ cat <<EOF | psql -d meetup
 		, l_flickr     text
 		, bio          text
 	);
-	CREATE FUNCTION meetup_profile_url ( text, text ) RETURNS text AS $$
+	CREATE OR REPLACE FUNCTION meetup_profile_url ( text, text ) RETURNS text AS $$
 		SELECT 'http://www.meetup.com/'
 			|| CASE WHEN $2 IS NOT NULL THEN $2::text || '/' ELSE '' END
 			|| 'members/'
