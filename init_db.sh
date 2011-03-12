@@ -5,20 +5,24 @@ echo "Re-initializing DB";
 cat <<-'EOF' | psql -d meetup
 	DROP TABLE members;
 	CREATE TABLE members (
-		meetup_id      int          PRIMARY KEY
-		, alias        text
-		, country      text
-		, state        text
-		, city         text
-		, zip          int
-		, lat          float8
-		, long         float8
-		, date_join    timestamp
-		, date_visit   timestamp
-		, l_facebook   text
-		, l_linkedin   text
-		, l_flickr     text
-		, bio          text
+		id_group            int
+		, id_meetup_member  int
+		, alias             text
+		, country           text
+		, state             text
+		, city              text
+		, zip               int
+		, lat               float8
+		, long              float8
+		, date_join         timestamp
+		, date_visit        timestamp
+		, l_facebook        text
+		, l_linkedin        text
+		, l_flickr          text
+		, l_twitter         text
+		, bio               text
+		, picture_url       text
+		, PRIMARY KEY ( id_group, id_meetup_member )
 	);
 	CREATE OR REPLACE FUNCTION meetup_profile_url ( text, text ) RETURNS text AS $$
 		SELECT 'http://www.meetup.com/'

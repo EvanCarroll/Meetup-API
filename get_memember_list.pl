@@ -1,65 +1,87 @@
 use strict;
+$|++;
 use warnings;
 use feature ':5.10';
 use LWP::Simple;
-use XML::Simple;
+use JSON::XS qw(decode_json);
+use Encode;
 use URI;
 use Getopt::Long;
 use DBD::Pg;
 
-my $api_key;
-my $group;
-GetOptions( "api_key=s" => \$api_key, "group=i" => \$group );
+my ( $api_key, $group_id );
+GetOptions(
+	'api_key=s' => \$api_key
+	, 'group=i' => \$group_id
+);
 
 my $dbh = DBI->connect('dbi:Pg:dbname=meetup');
 my $sth = $dbh->prepare(
 	'INSERT INTO members (
-		meetup_id
+
+		id_group
+		, id_meetup_member
 		, alias
 		, country
 		, state
+
 		, city
 		, zip
 		, lat
 		, long
 		, date_join
+
 		, date_visit
 		, l_facebook
 		, l_linkedin
 		, l_flickr
+		, l_twitter
+
 		, bio
+		, picture_url
 	)
-	VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
+	VALUES (
+		?, ?, ?, ?, ?
+		, ?, ?, ?, ?, ?
+		, ?, ?, ?, ?, ?
+		, ?, ?
+	)
 	'
 );
 
-my $uri = URI->new('https://api.meetup.com/members.xml/');
+my $uri = URI->new('https://api.meetup.com/members.json/');
 $uri->query_form(
-	group_id => $group
+	group_id => $group_id
 	, key => $api_key
 	, order => 'name'
-	, format => 'xml'
+	, format => 'json'
 	, page => 200
 	, offset => 0
 );
 
-my $xml;
+my $json;
 my $count;
 do {
 	warn "Retreiving url $uri";
 	my $file = get( $uri ) or die "Couldn't fetch";
-	$xml = XMLin( $file, SuppressEmpty => 1 );
+	use XXX;
+	Encode::from_to($file, 'iso-8859-1', 'utf8');
+	$json = decode_json( $file );
 
-	foreach my $alias ( keys %{$xml->{items}{item}} ) {
-		my $u = $xml->{items}{item}{$alias};
+	foreach my $u ( @{$json->{results}} ) {
 		
 		$sth->execute(
-			$u->{id}
-			, $alias
+			$group_id
+			, $u->{id}
+			, $u->{name}
 			, $u->{country}
 			, $u->{state}
 			, $u->{city}
-			, (int($u->{zip})||undef) # meetup3 seriously wtf
+			, (
+				DBI::looks_like_number($u->{zip})
+				? $u->{zip}
+				: undef
+			) # meetup3 seriously wtf
 			, $u->{lat}
 			, $u->{lon}
 			, $u->{joined}
@@ -67,15 +89,17 @@ do {
 			, $u->{other_services}{facebook}{identifier}
 			, $u->{other_services}{linkedin}{identifier}
 			, $u->{other_services}{flickr}{identifier}
+			, $u->{other_services}{twitter}{identifier}
 			, $u->{bio}
+			, $u->{photo_url}
 		);
 		
 		die $dbh->errstr if $dbh->err;
 	}
 
 } while (
-	$uri = $xml->{head}{'next'}
-	and %{$xml->{items}{item}}
+	$uri = $json->{meta}{'next'}
+	and @{ $json->{results} }
 );
 
 say "Done!";
