@@ -1,1 +1,2 @@
+DROP SCHEMA meetupcom CASCADE;
 CREATE SCHEMA meetupcom;

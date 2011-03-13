@@ -1,6 +1,6 @@
 CREATE TABLE meetupcom.members (
-	id_group            int            REFERENCES meetupcom.groups
-	, id_meetup_member  int
+	id_member           int            UNIQUE
+	, id_group          int            REFERENCES meetupcom.groups
 	, alias             text
 	, country           text
 	, state             text
@@ -16,5 +16,5 @@ CREATE TABLE meetupcom.members (
 	, l_twitter         text
 	, bio               text
 	, picture_url       text
-	, PRIMARY KEY ( id_group, id_meetup_member )
+	, PRIMARY KEY ( id_member, id_group )
 );

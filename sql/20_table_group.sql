@@ -5,6 +5,7 @@ CREATE TABLE meetupcom.groups (
 	, description  text
 	, state        text
 	, city         text
+	, zip          int
 	, lat          float8
 	, long         float8
 	, organizer_id int
