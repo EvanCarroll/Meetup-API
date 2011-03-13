@@ -97,11 +97,13 @@ do {
 			});
 			
 			foreach my $topic (  @{$u->{topics}}  ) {
-				$rs->add_to_topics({
-					id_topic => $topic->{id}
-					, topic_urlkey => $topic->{urlkey}
-					, topic_name   => $topic->{name}
-				});
+				eval {
+					$rs->add_to_topics({
+						id_topic => $topic->{id}
+						, topic_urlkey => $topic->{urlkey}
+						, topic_name   => $topic->{name}
+					});
+				}
 			}
 				
 		}
